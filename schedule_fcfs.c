@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "task.h"
 #include "list.h"
 #include "cpu.h"
@@ -17,7 +18,7 @@ struct node *head = NULL;
 void add(char *name, int priority, int burst) {
 
     Task *t = malloc(sizeof(Task));
-    t->name = name;
+    t->name = strdup(name);
     t->priority = priority;
     t->burst = burst;
     insert(&head, t);
@@ -31,7 +32,8 @@ void schedule() {
         while(temp->next != NULL){
             temp = temp->next;
         }
-        run(temp->task, temp->task->burst);        
+       //run(temp->task, temp->task->burst);     
+        run(temp->task, temp->task->burst);
         delete(&head, temp->task);
     }
 }
