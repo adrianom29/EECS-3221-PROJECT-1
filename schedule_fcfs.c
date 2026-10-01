@@ -1,7 +1,6 @@
 // Adriano Mancuso 221259940
 // First come first serve algorithm
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,15 +23,11 @@ void add(char *name, int priority, int burst) {
     insert(&head, t);
 }
 
-// goes to tail of linked list and removes 
-void schedule() {    
+// reverses linked list before iterating through
+void schedule() {
+    head = reverse(head);
     while(head != NULL){
         struct node *temp = head;    
-        
-        while(temp->next != NULL){
-            temp = temp->next;
-        }
-       //run(temp->task, temp->task->burst);     
         run(temp->task, temp->task->burst);
         delete(&head, temp->task);
     }

@@ -13,3 +13,4 @@ struct node {
 void insert(struct node **head, Task *task);
 void delete(struct node **head, Task *task);
 void traverse(struct node *head);
+struct node* reverse(struct node *head);
