@@ -25,11 +25,28 @@ void add(char *name, int priority, int burst){
 // sorts list based on burst time before iterating through
 void schedule() {
     sortBurst(head);
-    while (head != NULL){
-        struct node *temp = head;    
+
+    int numProcesses = 0;
+    int time = 0;
+    int waiting = 0;
+    int turnaround = 0;
+
+    //head = reverse(head);
+    while(head != NULL){
+        numProcesses++;
+        struct node *temp = head;
+        time += temp->task->burst;
+        waiting += time - temp->task->burst;
+        turnaround += time;
+
         run(temp->task, temp->task->burst);
         delete(&head, temp->task);
     }
+    printf("Waiting Time: %.2lf\n", (double)waiting/numProcesses);
+    printf("Turnaround Time: %.2lf\n", (double)turnaround/numProcesses);
+
+    //waiting time == response time for non-preemptive algorithms
+    printf("Response Time: %.2lf\n", (double)waiting/numProcesses);
 }
 
 // bubble sort on linked list
