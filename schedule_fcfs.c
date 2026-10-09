@@ -41,9 +41,9 @@ void schedule() {
         run(temp->task, temp->task->burst);
         delete(&head, temp->task);
     }
+    printf("\n");
     printf("Waiting Time: %.2lf\n", (double)waiting/numProcesses);
     printf("Turnaround Time: %.2lf\n", (double)turnaround/numProcesses);
-
     //waiting time == response time for non-preemptive algorithms
     printf("Response Time: %.2lf\n", (double)waiting/numProcesses);
 }
