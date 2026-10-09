@@ -49,27 +49,28 @@ void schedule() {
     printf("Response Time: %.2lf\n", (double)waiting/numProcesses);
 }
 
-// bubble sort on linked list
+// selection sort on linked list
 // sorts based on burst time (increasing)
 void sortBurst(struct node *head){
     if (head == NULL){
         return;
     }
-    int swapped;
-    struct node *current;
 
-    do{
-        swapped = 0;
-        current = head;
-        while (current->next != NULL){
-            Task *temp = current->task;
-            if (current->task->burst > current->next->task->burst){
-                current->task = current->next->task;
-                current->next->task = temp;
-                swapped = 1;
+    for (struct node *i = head; i->next != NULL; i = i->next){
+        struct node *min = i;
+        
+        // finds node with smallest burst
+        for (struct node *j = i->next; j != NULL; j = j->next){
+            if (j->task->burst < min->task->burst){
+                min = j;
             }
-            current = current->next;
+        }
+
+        // swaps node with smallest burst to correct position
+        if (min != i){
+            Task *temp = i->task;
+            i->task = min->task;
+            min->task = temp;
         }
     }
-    while(swapped);
 }
