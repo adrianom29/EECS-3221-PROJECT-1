@@ -42,14 +42,16 @@ void schedule() {
             counter++;
             if (counter <= numProcesses){ //if any task is running for first time
                 response += time;
-                waiting -= temp->task->burst;
+                //waiting time = turnaround - burst
+                //equivalent to waiting time = -burst + turnaround
+                waiting -= temp->task->burst; 
             }
 
             if (temp->task->burst <= QUANTUM){
                 run(temp->task, temp->task->burst);
                 time += temp->task->burst;
                 turnaround += time;
-                waiting += time;
+                waiting += time;        //waiting time = -burst + turnaround
                 delete(&head, temp->task);
             }
             else{
