@@ -29,19 +29,27 @@ void add(char *name, int priority, int burst) {
 // reverses linked list before iterating through
 void schedule() {
     int time = 0;
-    //int waiting = 0;
+    int waiting = 0;
     int turnaround = 0;
-    //int response = 0;
+    int response = 0;
 
+    int counter = 0;
 
     head = reverse(head);
     while(head != NULL){
         struct node *temp = head;
         while (temp != NULL){
+            counter++;
+            if (counter <= numProcesses){ //if any task is running for first time
+                response += time;
+                waiting -= temp->task->burst;
+            }
+
             if (temp->task->burst <= QUANTUM){
                 run(temp->task, temp->task->burst);
                 time += temp->task->burst;
                 turnaround += time;
+                waiting += time;
                 delete(&head, temp->task);
             }
             else{
@@ -52,11 +60,10 @@ void schedule() {
 
             temp = temp->next;
         }
-
     }
     printf("\n");
-    //printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
+    printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
     printf("Average turnaround time = %.2lf\n", (double)turnaround/numProcesses);
-    //printf("Average response time = %.2lf\n", (double)response/numProcesses);
+    printf("Average response time = %.2lf\n", (double)response/numProcesses);
 
 }
