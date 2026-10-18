@@ -30,7 +30,7 @@ void add(char *name, int priority, int burst) {
 void schedule() {
     int time = 0;
     //int waiting = 0;
-    //int turnaround = 0;
+    int turnaround = 0;
     //int response = 0;
 
 
@@ -41,20 +41,22 @@ void schedule() {
             if (temp->task->burst <= QUANTUM){
                 run(temp->task, temp->task->burst);
                 time += temp->task->burst;
+                turnaround += time;
                 delete(&head, temp->task);
             }
             else{
                 run(temp->task, QUANTUM);
                 time += QUANTUM;
-                temp->task->burst -= QUANTUM;
-                temp = temp->next;
+                temp->task->burst -= QUANTUM;   
             }
+
+            temp = temp->next;
         }
 
     }
-    //printf("\n");
-    //printf("Waiting Time: %.2lf\n", (double)waiting/numProcesses);
-    //printf("Turnaround Time: %.2lf\n", (double)turnaround/numProcesses);
-    //printf("Response Time: %.2lf\n", (double)response/numProcesses);
+    printf("\n");
+    //printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
+    printf("Average turnaround time = %.2lf\n", (double)turnaround/numProcesses);
+    //printf("Average response time = %.2lf\n", (double)response/numProcesses);
 
 }

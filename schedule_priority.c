@@ -24,6 +24,7 @@ void add(char *name, int priority, int burst){
     numProcesses++;
 }
 
+// reverses linked list before iterating through
 // sorts list based on priority time before iterating through
 void schedule() {
     head = reverse(head);
@@ -51,6 +52,7 @@ void schedule() {
 
 // bubble sort on linked list
 // sorts based on burst time (increasing)
+// bubble sort is used because duplicates will remain in same order as they originally appear
 void sortPriority(struct node *head){
     if (head == NULL){
         return;
