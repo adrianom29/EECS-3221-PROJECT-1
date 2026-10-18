@@ -12,6 +12,7 @@
 // Linked list implementation
 
 struct node *head = NULL;
+int numProcesses = 0;
 
 //task is added to linked list
 void add(char *name, int priority, int burst) {
@@ -21,18 +22,17 @@ void add(char *name, int priority, int burst) {
     t->priority = priority;
     t->burst = burst;
     insert(&head, t);
+    numProcesses++;
 }
 
 // reverses linked list before iterating through
 void schedule() {
-    int numProcesses = 0;
     int time = 0;
     int waiting = 0;
     int turnaround = 0;
 
     head = reverse(head);
     while(head != NULL){
-        numProcesses++;
         struct node *temp = head;
         time += temp->task->burst;
         waiting += time - temp->task->burst;
@@ -42,9 +42,9 @@ void schedule() {
         delete(&head, temp->task);
     }
     printf("\n");
-    printf("Waiting Time: %.2lf\n", (double)waiting/numProcesses);
-    printf("Turnaround Time: %.2lf\n", (double)turnaround/numProcesses);
+    printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
+    printf("Average turnaround time = %.2lf\n", (double)turnaround/numProcesses);
     //waiting time == response time for non-preemptive algorithms
-    printf("Response Time: %.2lf\n", (double)waiting/numProcesses);
+    printf("Average response time = %.2lf\n", (double)waiting/numProcesses);
 }
 
