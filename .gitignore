@@ -5,3 +5,4 @@ build/
 *.msi
 *.bat
 *.cmd
+*.o
