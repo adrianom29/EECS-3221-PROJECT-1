@@ -44,7 +44,6 @@ void schedule() {
     while(head != NULL){
         struct node *temp = head;
         
-
         //if no tie breaker
         if (temp->next == NULL || temp->task->priority != temp->next->task->priority){
             //is this node unvisited?
@@ -61,7 +60,7 @@ void schedule() {
             delete(&head, temp->task);
             continue;   //go to next iteration before rr runs
         }
-        //if no tie breaker, same priority, use rr.
+        //if there is a tie, same priority, use rr.
         int priority = temp->task->priority;
         struct node *current = head;
 
@@ -73,11 +72,11 @@ void schedule() {
                                    (next == NULL || next->task->priority != priority);
 
             int i = atoi(current->task->name + 1);
-            if (visited[i] != 1){
+            if (visited[i] == 0){
                 response += time;
                 waiting -= current->task->burst;   //waiting time = -burst + turnaround
+                visited[i] = 1;
             }
-            visited[i] = 1;
 
             //if burst <= quantum or node is last of that priority delete from list
             if (t->burst <= QUANTUM || isLastRemaining){

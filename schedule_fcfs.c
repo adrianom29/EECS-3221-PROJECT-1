@@ -34,13 +34,15 @@ void schedule() {
     head = reverse(head);
     while(head != NULL){
         struct node *temp = head;
-        time += temp->task->burst;
-        waiting += time - temp->task->burst;
-        turnaround += time;
 
+        waiting += time; 
         run(temp->task, temp->task->burst);
+
+        time += temp->task->burst;
+        turnaround += time;
         delete(&head, temp->task);
     }
+
     printf("\n");
     printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
     printf("Average turnaround time = %.2lf\n", (double)turnaround/numProcesses);
