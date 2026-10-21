@@ -42,27 +42,27 @@ void schedule() {
             counter++;
             if (counter <= numProcesses){ //if any task is running for first time
                 response += time;
-                //waiting time = turnaround - burst
-                //equivalent to waiting time = -burst + turnaround
-                waiting -= temp->task->burst; 
+                waiting -= temp->task->burst;   //waiting time = -burst + turnaround 
             }
-
+            //if burst <= quantum delete from list
             if (temp->task->burst <= QUANTUM){
                 run(temp->task, temp->task->burst);
                 time += temp->task->burst;
                 turnaround += time;
-                waiting += time;        //waiting time = -burst + turnaround
+                      
                 delete(&head, temp->task);
             }
             else{
                 run(temp->task, QUANTUM);
                 time += QUANTUM;
-                temp->task->burst -= QUANTUM;   
+                temp->task->burst -= QUANTUM;
             }
 
             temp = temp->next;
         }
     }
+    waiting += turnaround;   //waiting time = -burst + turnaround
+
     printf("\n");
     printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
     printf("Average turnaround time = %.2lf\n", (double)turnaround/numProcesses);

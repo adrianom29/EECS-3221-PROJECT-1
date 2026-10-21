@@ -8,6 +8,7 @@
 #include "cpu.h"
 #include "list.h"
 #include "schedulers.h"
+#include <stdbool.h>
 
 // Linked list implementation
 
@@ -29,26 +30,60 @@ void add(char *name, int priority, int burst){
 // reverses linked list before iterating through
 // sorts list based on priority time before iterating through
 void schedule() {
-    //int time = 0;
-    //int waiting = 0;
-    //int turnaround = 0;
-    //int response = 0;
+    int time = 0;
+    int waiting = 0;
+    int turnaround = 0;
+    int response = 0;
     
     head = reverse(head);
     sortPriority(head);
     
     while(head != NULL){
         struct node *temp = head;
-        time += temp->task->burst;
+        //if no tie breaker
+        if (temp->next == NULL || temp->task->priority != temp->next->task->priority){
+            waiting -= temp->task->burst;
+            response += time;
+            run(temp->task, temp->task->burst);
+            time += temp->task->burst;
+            turnaround += time;
+            delete(&head, temp->task);
+            continue;
+        }
+        //if same priority, use rr.
+        int priority = temp->task->priority;
+        struct node *current = head;
 
-        run(temp->task, temp->task->burst);
-        delete(&head, temp->task);
+        while (current != NULL && current->task->priority == priority){
+            struct node *next = current->next;
+            Task *t = current->task;
+            //is current node the last remaining node of that priority?
+            bool isLastRemaining = current == head && 
+                                   (next == NULL || next->task->priority != priority);
+
+            //if burst <= quantum or node is last of that priority delete from list
+            if (t->burst <= QUANTUM || isLastRemaining){
+                run(t, t->burst);
+                time += t->burst;
+                turnaround += time;
+                waiting -= t->burst;   //waiting time = -burst + turnaround 
+                delete(&head, t);
+            }
+            else{
+                run(t, QUANTUM);
+                time += QUANTUM;
+                t->burst -= QUANTUM;
+                waiting -= QUANTUM;   //waiting time = -burst + turnaround 
+            }
+            current = next;
+        }
     }
-    printf("\n");
-    //printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
-    //printf("Average turnaround time = %.2lf\n", (double)turnaround/numProcesses);
-    //waiting time == response time for non-preemptive algorithms
-    //printf("Average response time = %.2lf\n", (double)response/numProcesses);
+    waiting += turnaround;   //waiting time = -burst + turnaround 
+
+    printf("\n");    
+    printf("Average waiting time = %.2lf\n", (double)waiting/numProcesses);
+    printf("Average turnaround time = %.2lf\n", (double)turnaround/numProcesses);
+    printf("Average response time = %.2lf\n", (double)response/numProcesses);
 }
 
 // bubble sort on linked list
