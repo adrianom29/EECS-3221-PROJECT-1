@@ -40,7 +40,7 @@ void schedule() {
         struct node *temp = head;
         while (temp != NULL){
             counter++;
-            if (counter <= numProcesses){ //if any task is running for first time
+            if (counter <= numProcesses){       //if any task is running for first time
                 response += time;
                 waiting -= temp->task->burst;   //waiting time = -burst + turnaround 
             }

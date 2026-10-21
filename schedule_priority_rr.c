@@ -8,7 +8,6 @@
 #include "cpu.h"
 #include "list.h"
 #include "schedulers.h"
-#include <stdbool.h>
 
 // Linked list implementation
 
@@ -34,23 +33,35 @@ void schedule() {
     int waiting = 0;
     int turnaround = 0;
     int response = 0;
+
+    //checks if task has been visited (for response time)
+    //allocates proper amount of memory
+    int *visited = calloc(numProcesses, sizeof(int));  
     
     head = reverse(head);
     sortPriority(head);
     
     while(head != NULL){
         struct node *temp = head;
+        
+
         //if no tie breaker
         if (temp->next == NULL || temp->task->priority != temp->next->task->priority){
-            waiting -= temp->task->burst;
-            response += time;
+            //is this node unvisited?
+            int i = atoi(head->task->name + 1);
+            if (visited[i] == 0){
+                waiting -= temp->task->burst;      //waiting time = -burst + turnaround 
+                response += time;
+                visited[i] = 1;
+            }
+
             run(temp->task, temp->task->burst);
             time += temp->task->burst;
             turnaround += time;
             delete(&head, temp->task);
-            continue;
+            continue;   //go to next iteration before rr runs
         }
-        //if same priority, use rr.
+        //if no tie breaker, same priority, use rr.
         int priority = temp->task->priority;
         struct node *current = head;
 
@@ -58,22 +69,27 @@ void schedule() {
             struct node *next = current->next;
             Task *t = current->task;
             //is current node the last remaining node of that priority?
-            bool isLastRemaining = current == head && 
+            int isLastRemaining = current == head && 
                                    (next == NULL || next->task->priority != priority);
+
+            int i = atoi(current->task->name + 1);
+            if (visited[i] != 1){
+                response += time;
+                waiting -= current->task->burst;   //waiting time = -burst + turnaround
+            }
+            visited[i] = 1;
 
             //if burst <= quantum or node is last of that priority delete from list
             if (t->burst <= QUANTUM || isLastRemaining){
                 run(t, t->burst);
                 time += t->burst;
                 turnaround += time;
-                waiting -= t->burst;   //waiting time = -burst + turnaround 
                 delete(&head, t);
             }
             else{
                 run(t, QUANTUM);
                 time += QUANTUM;
                 t->burst -= QUANTUM;
-                waiting -= QUANTUM;   //waiting time = -burst + turnaround 
             }
             current = next;
         }
